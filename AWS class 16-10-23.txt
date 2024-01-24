@@ -1,0 +1,442 @@
+
+Groups
+An autoscaling group contains a collection of EC2 instances that are exactly the same
+While creating an autoscaling group, the launch configuration must be specified After
+specifying, the launch configuration cannot be changed
+New instances are launched using a new configuration
+EC2 instances are launched and terminated using scaling policies
+
+launch configuration
+Launch configuration is a template that is used to launch EC2 instances for the autoscaling purpose
+Autoscaling groups (the next topic) use launch configuration to launch instances
+Launch configuration cannot be modified after creation
+It can be created in two ways:
+• From scratch: Image ID, instance type, storage devices, etc.
+• From an EC2 instance: Attributes from the instance are copied. Block device mapping of the AMI
+is included. Any additional device that was attached after launching the configuration
+
+Scalling options
+Scaling policies and alarms:
+Scaling policies mention how to scale, and alarms decide when to scale
+	
+Cloudwatch
+CloudWatch alarms are set to monitor individual metrics, e.g CPU utilization, etc.
+When the threshold is breached, scaling policies are executed
+Minimum, maximum, and the desired capacity
+
+ScalingPolicy:
+• Increase2 instancesat a time
+• Decrease 1 instanceat a time
+
+Alarm:
+If CPU utilization > 80% for more than
+10 mins, ring the bell
+Minimum capacity: 2
+Desiredcapacity: 4
+Maximum capacity: 10
+
+Scaling based on a schedule:This type of a scaling method is used to scale
+at a given time and date
+Increase the instances by 2 at 2:30 pm today
+Decrease the instance by 1 at 12:00 am tomorrow
+
+Scaling based on demand: Here, scaling occurs when the CPU utilization of the current running instances grows beyond a fixed usage limit
+If CPU utilization > 80% for more than
+10 mins, increase the instance by 1
+If CPU utilization < 50% for more than 5
+mins, decrease the instances by 2
+
+
+
+
+
+17/10/23
+
+Cool-down Period: Simple Scaling Policy
+The cool-down period ensures that autoscaling does not launch or terminate any more instances until a specified period is completed. Scaling activity is suspended until the cool-down period is in effect. 
+
+
+Instance termination policies
+TerminationPolicies (Other than the default)
+• Oldest instance
+Newest instance
+• Oldest launch configuration
+• Closest to the next instance hour
+
+
+Instance protection does not terminate an instance during a scale
+in event. It can be enabled at the autoscaling group or individual
+instance level
+
+
+No additional fees
+• Underlying instances are charged hourly
+• For details, visit: https://aws.amazon.com/autoscaling/pricing/
+
+
+Autoscaling: Adds and removes capacity as per requirement.
+Load Balancer: Distributes the incoming traffic evenly across all EC2 instances
+Placing ELB in front of AS makes sure that all the incoming traffic are distributed, dynamically changing the number of EC2 instances ELB is the point of contact between the clients and the backend EC2 instances.
+
+Load balancer automatically registers instances in the group
+Health checks:
+EC2 instance only: EC2 status checks
+are considered
+EC2 and ELB health checks: An
+instance is considered unhealthy if
+either of the health checks fail
+
+
+What is Route53 ?
+Domain Name System
+DNS Hierarchy
+Hosting a Website
+Step 1: Start up a server/host where the web service will run (Say, the IP address of the server is 10.20.30.40)
+Step 2: Get a domain name from the domain name providers such as GoDaddy, Freenom, etc.
+Step 3: Link the domain name with the IP address from Step 1 by using the Domain Name Service/System
+DNS Literature
+Network latency is the amount of time taken to deliver some amount of data over n/w
+Source Destination
+?
+10 seconds
+5 seconds
+Latency = 10 + 5 = 15 seconds
+Network Latency and Bandwidth
+
+
+
+
+23-10-23
+
+1. VPC: A virtual network environment that provides a secure and isolated environment for your AWS resources.
+
+2. Subnets: A network segment within a VPC that allows you to organize your resources and assign IP addresses to your resources.
+
+3. Route tables: A set of rules that determine how traffic is directed within a VPC.
+
+4. Internet Gateway: A gateway that connects your VPC to the internet and enables internet access for your resources.
+
+5. Network Access Control Lists (ACLs): A set of rules
+6. Security Groups: A security mechanism that allows you to control traffic to and from your resources.
+
+
+
+
+
+
+31-10-23
+
+Phoeba Grace16:08
+.sudo su
+.vim keypair
+wq
+NAGI REDDY MARAM17:05
+sudo  pip install awscli           aws --version     aws configure
+Phoeba Grace17:05
+For Windows, you can download and run the MSI installer from the [AWS CLI Downloads page](https://aws.amazon.com/cli/).
+Phoeba Grace17:07
+sudo pip install awscli
+aws --version
+aws configure
+access key ID
+sudo aws s3 ls
+Phoeba Grace17:08
+or you can give ( aws s3 ls)
+Phoeba Grace17:09
+Tasks To Be Performed: 1. Create a VPC endpoint for a S3 bucket of your choice for secure access to the files.
+das-memi-mex
+
+
+sudo su
+vim kerpair name
+copy keypair
+exit :wq
+chmod 400 mykey1.pem
+ssh -i "mykey1.pem" ec2-user@10.0.1.254
+
+
+end point task
+    1  sudo apt update
+    2  apt install awscli
+    3  aws --version
+    4  aws configure
+    5  aws s3 ls
+
+
+
+Test Link    https://docs.google.com/forms/d/e/1FAIpQLSdLi8ajfy5nJLo-l9Kh0n5HlQSYhPwBGAZ82ZBk-yZ_-8_UVg/viewform
+aws@raicetechsoft.com
+
+
+
+
+
+
+
+AWSTemplateFormatVersion: 2010-09-09
+Description: 'Three-tier architecture with Web, Application, and DB tiers.'
+Parameters:
+  DBInstanceIdentifier:
+    Type: String
+    Description: database-1
+  DBUsername:
+    Type: String
+    Description: admin
+  DBPassword:
+    Type: String
+    Description: Yesu1999
+Resources:
+  MyVPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: MyVPC
+  PublicSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.0.0/24
+      AvailabilityZone: us-east-1a
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: PublicSubnet
+  PrivateSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: us-east-1a
+      Tags:
+        - Key: Name
+          Value: PrivateSubnet
+  PrivateSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: us-east-1b
+      Tags:
+        - Key: Name
+          Value: PrivateSubnet1
+          
+  WebInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: t2.micro
+      KeyName: mykey
+      ImageId: ami-0fc5d935ebf8bc3bc
+      SubnetId: !Ref PublicSubnet
+      SecurityGroupIds:
+        - !Ref WebSecurityGroup
+      UserData:
+        'Fn::Base64': |
+          #!/bin/bash
+          # Your instance initialization script goes here
+  WebSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Web Security Group
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+  AppInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: t2.micro
+      KeyName: mykey
+      ImageId: ami-0fc5d935ebf8bc3bc
+      SubnetId: !Ref PrivateSubnet
+      SecurityGroupIds:
+        - !Ref AppSecurityGroup
+      UserData:
+        'Fn::Base64': |
+          #!/bin/bash
+          # Your instance initialization script goes here
+  AppSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: App Security Group
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: !GetAtt WebSecurityGroup.GroupId
+  MyDBInstance:
+    Type: 'AWS::RDS::DBInstance'
+    Properties:
+      AllocatedStorage: 20
+      DBInstanceIdentifier: !Ref DBInstanceIdentifier
+      DBName: mydatabase
+      Engine: mysql
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+      VPCSecurityGroups:
+        - !Ref DBSecurityGroup
+      MultiAZ: false
+      StorageType: gp2
+      DBInstanceClass: db.t2.micro
+      AvailabilityZone: us-east-1a
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      PubliclyAccessible: false
+  DBSubnetGroup:
+    Type: 'AWS::RDS::DBSubnetGroup'
+    Properties:
+      DBSubnetGroupDescription: Subnet group for RDS
+      SubnetIds:
+        - !Ref PrivateSubnet
+        - !Ref PrivateSubnet1
+  DBSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Security group for RDS
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref AppSecurityGroup
+          Description: Allow inbound traffic on port 3306 from Application Tier 4
+
+
+
+
+
+
+
+
+linux server commands
+
+#!/bin/bash
+#user data for new EC2 instances
+#install httpd (Linux 2 version)
+yum update -y
+yum install -y httpd
+systemctl start httpd
+systemctl enable httpd
+systemctl httpd
+echo "Hello from AP-SOUTH-1" > /var/www/html/index.html
+
+
+
+
+    1  sudo yum update
+    2  sudo amazon-linux-extras install -y lustre2.10
+    3  sudo mkdir /fsx
+    4  sudo mount -t lustre -o relatime,flock fs-0b7fdca18e18d187e.fsx.eu-north-1.amazonaws.com@tcp:/o6spxbmv /fsx
+    5  df -h
+    6  history
+
+
+ubuntu window server.4.7gb file
+https://ubuntu.com/download/desktop/thank-you?version=22.04.3&architecture=amd64
+
+
+
+Git Token
+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
+
+Task 1 Commands
+mkdir myfolder
+cd myfolder
+touch Code.txt Log.txt Output.txt
+ls
+sudo nano Code.txt
+sudo nano Output.txt
+git init
+git add Code.txt Output.txt
+git commit -m "Add Code.txt and Output.txt"
+git branch -M main
+git branch
+https://github.com/YesuGopisetti/yesu.git
+git remote add origin https://github.com/YesuGopisetti/yesu.git
+git push -u origin main
+history
+
+
+
+Task 2 Commands
+
+mkdir myfolder
+cd myfolder
+git init
+echo "# Repository" >> README.md
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/YesuGopisetti/Repository.git
+git push -u origin main
+git checkout -b master
+touch main.txt
+sudo nano main.txt
+git add main.txt
+git commit -m "adding new txt file in master branch"
+git checkout -b develop
+git checkout -b f1
+git checkout -b f2
+git checkout develop
+touch develop.txt
+git nano develop.txt (add html code and press ctrl+x, y, enter)
+git add develop.txt
+git commit -m "adding develop.txt"
+git checkout f1
+touch f1.txt
+git nano f1.txt (add html code and press ctrl+x, y, enter)
+git add f1.txt
+git commit -m "adding f1.txt"
+git checkout f2
+touch f2.txt
+git nano f2.txt (add html code and press ctrl+x, y, enter)
+git add f2.txt
+git commit -m "adding f2.txt"
+git remote add origin https://github.com/YesuGopisetti/Repository.git
+git push -u origin --all
+git checkout develop
+git branch
+git branch -d f2
+git branch
+git push origin --delete F2   (enter Git username and password)
+history
+
+
+
+Project 1 Commands
+1  sudo su
+    2  groups
+    3  sudo chown -R ec2-user:apache /var/www
+    4  sudo chmod 2775 /var/www
+    5  find /var/www -type d -exec sudo chmod 2775 {} \;
+    6  find /var/www -type f -exec sudo chmod 0664 {} \;
+    7  cd /var/www
+    8  mkdir myfiles
+    9  cd myfiles
+   10  >dbinfo.myfiles
+   11  nano dbinfo.myfiles
+   12  cd /var/www/html
+   13  >SamplePage.php
+   14  nano SamplePage.php
+   15  mysql -h database-1.ckoc95emxdml.us-east-1.rds.amazonaws.com -u intel -p
+   16  cd /var/www
+   17  ls
+   18  cd /var/www/html
+   19  ls
+   20  nano SamplePage.php 
+   21  mysql -h database-1.ckoc95emxdml.us-east-1.rds.amazonaws.com -u intel -p
+
+   26  sudo hostnamectl set-hostname new-yesu1999.xyz
+   27  hostname
+   28  sudo reboot
+   29  history
+[ec2-user@new-yesu1999 ~]$ 
