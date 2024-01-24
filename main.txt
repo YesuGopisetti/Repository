@@ -1,0 +1,6 @@
+<!Doctypehtml>
+<html>
+<body>
+<h1>This is master main.txt file</h1>
+</body>
+</html>
